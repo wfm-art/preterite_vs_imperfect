@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preterite vs. Imperfect</title>
+    
+    <style>
+        :root {
+            --primary-blue: #007bff;
+            --dark-blue: #0056b3;
+            --green: #28a745;
+            --red: #dc3545;
+            --yellow: #f0ad4e;
+            
+            /* Esquema de colores */
+            --bg-color: #f0f4f8;
+            --container-bg: #ffffff;
+            --text-color: #333;
+            --header-bg: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
+            --tab-bg: #f1f1f1;
+            --tab-active-bg: var(--primary-blue);
+            --tab-text: #555;
+            --tab-active-text: #ffffff;
+            --border-color: #dee2e6;
+            --light-gray-bg: #f8f9fa;
+        }
+
+        /* --- Modo Oscuro --- */
+        body.dark-mode {
+            --bg-color: #121212;
+            --container-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --header-bg: #1e1e1e;
+            --tab-bg: #333;
+            --tab-active-bg: var(--primary-blue);
+            --tab-text: #bbb;
+            --tab-active-text: #ffffff;
+            --border-color: #444;
+            --light-gray-bg: #2a2a2a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background-color: var(--container-bg);
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+            overflow: hidden;
+            transition: background-color 0.3s;
+        }
+        header {
+            background: var(--header-bg);
+            color: white;
+            padding: 20px 35px;
+            text-align: center;
+            position: relative;
+        }
+        header h1 { margin: 0; font-size: 2.5em; }
+        header p { font-size: 1.2em; opacity: 0.9; margin: 5px 0 0; }
+        
+        /* --- Controles de Cabecera (Idioma, Modo) --- */
+        .header-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .control-button {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .control-button:hover { background: rgba(255,255,255,0.4); }
+
+        /* --- Estructura de Pestañas Principales --- */
+        .main-tab-nav {
+            display: flex;
+            background-color: var(--tab-bg);
+            border-bottom: 3px solid var(--dark-blue);
+        }
+        .main-tab-nav button {
+            background-color: inherit; border: none; outline: none; cursor: pointer;
+            padding: 18px 25px; transition: 0.3s; font-size: 1.1em;
+            font-weight: bold; color: var(--tab-text); flex-grow: 1;
+        }
+        .main-tab-nav button:hover { background-color: var(--border-color); }
+        .main-tab-nav button.active { background-color: var(--tab-active-bg); color: var(--tab-active-text); }
+        
+        .main-tab-content { display: none; padding: 30px; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- Estilos Generales --- */
+        h2 { color: var(--primary-blue); border-bottom: 2px solid var(--primary-blue); padding-bottom: 5px; font-size: 1.8em; margin-top: 0; }
+        h3 { color: var(--green); font-size: 1.4em; }
+        .accent { color: var(--primary-blue); font-weight: bold; }
+        .comparison-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .tense-box { background-color: var(--light-gray-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; }
+        .tense-box h3 { margin-top: 0; font-size: 1.6em; text-align: center; }
+        
+        /* --- Estilos para Iconos (Emojis) --- */
+        .icon-wrapper { 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80px;
+            margin-bottom: 15px; 
+            font-size: 4.5em; /* Aumenta el tamaño del emoji */
+        }
+        
+        /* --- Estilos de Imagen Real (Ahora Emojis) --- */
+        .real-image-box {
+            text-align: center;
+            background: var(--light-gray-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .real-image-box .emoji-placeholder {
+            font-size: 6em;
+            line-height: 1.2;
+            display: block;
+            height: 100px; /* Altura fija */
+            margin-bottom: 10px;
+        }
+        .real-image-box p {
+            font-style: italic;
+            color: #555;
+            font-size: 0.9em;
+        }
+        body.dark-mode .real-image-box p {
+            color: #bbb;
+        }
+        .real-image-box .caption {
+            font-weight: bold;
+            font-style: normal;
+            font-size: 1em;
+            color: var(--text-color);
+        }
+        
+        .button-primary {
+            background-color: var(--primary-blue); color: white; border: none; padding: 10px 20px;
+            border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold; transition: background-color 0.2s;
+        }
+        .button-primary:hover { background-color: var(--dark-blue); }
+        .button-secondary {
+            background-color: #6c757d; color: white; border: none; padding: 8px 15px;
+            border-radius: 5px; cursor: pointer; font-size: 0.9em;
+        }
+
+        /* --- Icono de Pronunciación (TTS) --- */
+        .tts-icon {
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-left: 8px;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+        .tts-icon:hover { transform: scale(1.2); }
+
+        /* --- Pestaña 1: Visualizador --- */
+        .visualizer-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin: 20px 0; }
+        .visualizer-controls button { border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: bold; color: white; }
+        .visualizer-controls .btn-pret { background-color: var(--red); }
+        .visualizer-controls .btn-imp { background-color: var(--green); }
+        .visualizer-controls .btn-int { background-color: var(--yellow); color: #333; }
+        .timeline { position: relative; width: 100%; height: 50px; background: #e0e0e0; border-radius: 5px; margin: 40px 0 30px; }
+        .timeline-label { position: absolute; top: -25px; font-size: 0.9em; color: #555; }
+        .past { left: 10px; } .present { right: 10px; }
+        .timeline .dot { position: absolute; top: 15px; width: 20px; height: 20px; background-color: var(--red); border-radius: 50%; left: 48%; animation: popIn 0.5s ease-out forwards; }
+        .timeline .wave { position: absolute; top: 15px; height: 20px; background: linear-gradient(to right, #5bc0de, #337ab7); opacity: 0.7; left: 10%; width: 80%; border-radius: 5px; animation: flowIn 1.5s ease-out forwards; }
+        .timeline .wave.interrupted { width: 40%; animation: flowIn 1s ease-out forwards; }
+        .timeline .dot.interrupter { left: 50%; animation: popIn 0.5s 1s ease-out forwards; }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes flowIn { 0% { width: 0%; opacity: 0; } 100% { opacity: 0.7; } }
+
+        /* --- Pestaña 2: Formación --- */
+        .tab-container { overflow: hidden; border: 1px solid var(--border-color); background-color: var(--tab-bg); border-radius: 5px 5px 0 0; }
+        .tab-container button { background-color: inherit; float: left; border: none; outline: none; cursor: pointer; padding: 14px 16px; transition: 0.3s; font-size: 1em; font-weight: bold; color: var(--tab-text); }
+        .tab-container button:hover { background-color: var(--border-color); }
+        .tab-container button.active { background-color: #ccc; color: #333; }
+        .nested-tab-content { display: none; padding: 10px 15px; border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 5px 5px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid var(--border-color); padding: 8px; text-align: center; }
+        th { background-color: var(--light-gray-bg); }
+
+        /* --- Pestaña 3: Práctica --- */
+        .quiz-section { margin-bottom: 25px; padding-bottom: 25px; border-bottom: 2px dashed var(--border-color); }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .section-header h3 {
+            margin: 0;
+        }
+        .refresh-btn {
+            font-size: 0.9em;
+            padding: 5px 10px;
+        }
+
+        .quiz-question { margin-bottom: 20px; background: var(--light-gray-bg); padding: 15px; border-radius: 5px; }
+        .quiz-question p { font-size: 1.1em; margin-bottom: 10px; }
+        .quiz-question button { background-color: var(--primary-blue); color: white; border: none; padding: 10px 15px; margin-right: 10px; border-radius: 5px; cursor: pointer; font-size: 1em; }
+        
+        .quiz-image-placeholder { /* (v5.9) Emoji para el quiz */
+            font-size: 3em;
+            text-align: center;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .quiz-translation {
+            display: block;
+            font-size: 0.9em;
+            font-style: italic;
+            color: #555;
+            margin: -5px 0 10px 20px;
+        }
+        body.dark-mode .quiz-translation { color: #bbb; }
+        .quiz-translation:empty { display: none; }
+
+        .feedback { font-weight: bold; margin-left: 10px; }
+        .correct { color: var(--green); }
+        .incorrect { color: var(--red); }
+        
+        .explanatory-note {
+            font-size: 0.9em;
+            font-style: italic;
+            background-color: var(--light-gray-bg);
+            border: 1px dashed var(--border-color);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .explanation-text {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 10px;
+            padding: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+        body.dark-mode .explanation-text {
+            color: #ccc;
+            background: #333;
+        }
+
+        /* Historia Interactiva */
+        .interactive-story { background: #fdfaf6; border: 1px solid var(--yellow); padding: 20px; border-radius: 8px; font-size: 1.2em; line-height: 2; color: #333; }
+        .interactive-story select { font-size: 1em; border: 2px solid #ccc; border-radius: 4px; background: #fff; padding: 2px 5px; }
+        .story-explanation {
+            display: block;
+            font-size: 0.9em;
+            font-style: italic;
+            color: var(--dark-blue);
+            margin-left: 10px;
+        }
+        body.dark-mode .interactive-story { color: #333; }
+        body.dark-mode .story-explanation { color: #80bfff; }
+
+        /* Drag & Drop */
+        .sorter-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .dropzone { min-height: 200px; background: var(--light-gray-bg); border: 3px dashed var(--border-color); border-radius: 8px; padding: 10px; }
+        .dropzone.drag-over { background-color: #e9ecef; border-color: var(--primary-blue); }
+        .dropzone h4 { text-align: center; margin-top: 0; }
+        .draggable { background-color: var(--container-bg); border: 1px solid #ccc; padding: 12px; margin-bottom: 8px; border-radius: 5px; cursor: grab; }
+        .draggable.dragging { opacity: 0.5; }
+        #items-to-sort { margin-top: 20px; padding: 10px; background: var(--tab-bg); border-radius: 8px; }
+        .drag-explanation {
+            font-size: 0.85em;
+            color: #555;
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 1px dashed #ccc;
+        }
+        body.dark-mode .drag-explanation { color: #bbb; }
+
+        /* --- Pestaña 4: Flashcards --- */
+        .flashcard-app { display: flex; flex-direction: column; align-items: center; }
+        .flashcard-container { width: 90%; max-width: 500px; height: 300px; perspective: 1000px; margin-bottom: 20px; }
+        .flashcard {
+            width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+            transition: transform 0.6s; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 10px;
+        }
+        .flashcard.is-flipped { transform: rotateY(180deg); }
+        .card-face {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 25px;
+            font-size: 1.5em;
+            border-radius: 10px;
+            box-sizing: border-box;
+            white-space: normal;
+            word-break: break-word; /* Arregla bug de "Él no quiso ir." */
+        }
+        .card-front { background: var(--container-bg); border: 2px solid var(--primary-blue); color: var(--text-color); }
+        .card-back { background: var(--light-gray-bg); border: 2px solid var(--green); color: var(--dark-blue); transform: rotateY(180deg); }
+        .card-back p { margin: 10px 0 0; font-size: 0.8em; color: var(--text-color); opacity: 0.8; }
+        body.dark-mode .card-back { color: var(--text-color); }
+        .flashcard-nav { display: flex; justify-content: center; gap: 20px; }
+        .flashcard-nav button { font-size: 1em; font-weight: bold; }
+    </style>
+</head>
+<body class="">
+
+    <div class="container">
+        <header>
+            <div class="header-controls">
+                <button id="lang-toggle" class="control-button">(EN / ES)</button>
+                <button id="theme-toggle" class="control-button">☀️/🌙</button>
+            </div>
+            <h1 data-lang-key="header_title">Preterite vs. Imperfect</h1>
+            <p data-lang-key="header_subtitle">Mastering the 📸 Photo vs. the 🎥 Movie</p>
+        </header>
+        
+        <nav class="main-tab-nav">
+            <button class="main-tab-link active" onclick="changeMainTab(event, 'tab-metafora')" data-lang-key="tab_metaphor">📸/🎥 The Metaphor</button>
+            <button class="main-tab-link" onclick="changeMainTab(event, 'tab-formacion')" data-lang-key="tab_formation">✍️ Formation</button>
+            <button class="main-tab-link" onclick="changeMainTab(event, 'tab-practica')" data-lang-key="tab_practice">🧠 Interactive Practice</button>
+            <button class="main-tab-link" onclick="changeMainTab(event, 'tab-flashcards')" data-lang-key="tab_flashcards">📇 Flashcards</button>
+        </nav>
+
+        <main>
+            <div id="tab-metafora" class="main-tab-content" style="display: block;">
+                <h2 data-lang-key="metaphor_title">The Big Idea: Photo or Movie?</h2>
+                <div class="comparison-grid">
+                    <div class="tense-box">
+                        <div class="icon-wrapper">
+                            <span>📸</span>
+                        </div>
+                        <h3>Preterite = A Photo 📸 (Snapshot)</h3>
+                        <p data-lang-key="metaphor_pret_desc">Used for actions that are a <span class="accent">single, complete, finished moment</span>. It's a dot on the timeline.</p>
+                        <p><strong>Acronym:</strong> A.S.A.P. (Action, Series, Accomplished, Past-defined)</p>
+                    </div>
+                    <div class="tense-box">
+                        <div class="icon-wrapper">
+                            <span>🎥</span>
+                        </div>
+                        <h3>Imperfect = A Movie 🎥 (Video)</h3>
+                        <p data-lang-key="metaphor_imp_desc">Used for actions that were <span class="accent">continuous, in-progress, or repeated</span>. It describes the scene (background).</p>
+                        <p><strong>Acronym:</strong> W.A.T.E.R.S. (Weather, Age, Time, Emotion, Repetition, Setting)</p>
+                    </div>
+                </div>
+
+                <h3 data-lang-key="viz_real_title" style="margin-top: 30px;">Real Visual Examples</h3>
+                <div class="comparison-grid">
+                    <div class="real-image-box">
+                        <span class="emoji-placeholder">🎓</span>
+                        <span class="caption" data-lang-key="viz_caption_pret">Preterite: A "Snapshot"</span>
+                        <p data-lang-key="viz_caption_pret_desc">A single, completed event. <br><strong>Example:</strong> "Ella <span class="accent">se graduó</span>." (She graduated.)</p>
+                    </div>
+                    <div class="real-image-box">
+                        <span class="emoji-placeholder">🧒⚽️☀️</span>
+                        <span class="caption" data-lang-key="viz_caption_imp">Imperfect: A "Scene"</span>
+                        <p data-lang-key="viz_caption_imp_desc">A description of the background. <br><strong>Example:</strong> "Los niños <span class="accent">jugaban</span> y <span class="accent">hacía</span> sol." (The kids were playing and it was sunny.)</p>
+                    </div>
+                </div>
+                <h3 data-lang-key="viz_title" style="margin-top: 30px;">Interactive Timeline Visualizer</h3>
+                <p data-lang-key="viz_desc">Click the buttons to see how each concept is "drawn" on the timeline.</p>
+                <div class="visualizer-controls">
+                    <button class="btn-pret" onclick="triggerAnimation('pretérito')" data-lang-key="viz_btn_pret">See Preterite (Action 📸)</button>
+                    <button class="btn-imp" onclick="triggerAnimation('imperfecto')" data-lang-key="viz_btn_imp">See Imperfect (Scene 🎥)</button>
+                    <button class="btn-int" onclick="triggerAnimation('interrupción')" data-lang-key="viz_btn_int">See Interruption (🎥 + 📸)</button>
+                </div>
+                <div class="timeline" id="interactive-timeline">
+                    <span class="timeline-label past" data-lang-key="past">Past</span>
+                    <span class="timeline-label present" data-lang-key="present">Present</span>
+                </div>
+                <p id="timeline-explanation" style="text-align: center; font-weight: bold; min-height: 20px;"></p>
+            </div>
+
+            <div id="tab-formacion" class="main-tab-content">
+                <h2 data-lang-key="form_title">How are they formed? (Conjugation)</h2>
+                <p data-lang-key="form_desc">Use the tabs to see the regular endings.</p>
+                
+                <div class="tab-container">
+                    <button class="nested-tab-link active" onclick="openConjugationTab(event, 'pret-ar')">Preterite (-AR)</button>
+                    <button class="nested-tab-link" onclick="openConjugationTab(event, 'pret-erir')">Preterite (-ER/-IR)</button>
+                    <button class="nested-tab-link" onclick="openConjugationTab(event, 'imp-ar')">Imperfect (-AR)</button>
+                    <button class="nested-tab-link" onclick="openConjugationTab(event, 'imp-erir')">Imperfect (-ER/-IR)</button>
+                </div>
+                <div id="pret-ar" class="nested-tab-content" style="display: block;"><h3>Preterite: -AR Verbs (HABLAR)</h3><table><tr><th>Yo</th><td>habl<span class="accent">é</span></td></tr><tr><th>Tú</th><td>habl<span class="accent">aste</span></td></tr><tr><th>Él/Ella/Ud.</th><td>habl<span class="accent">ó</span></td></tr><tr><th>Nosotros</th><td>habl<span class="accent">amos</span></td></tr><tr><th>Ellos/Uds.</th><td>habl<span class="accent">aron</span></td></tr></table></div>
+                <div id="pret-erir" class="nested-tab-content"><h3>Preterite: -ER/-IR Verbs (COMER / VIVIR)</h3><table><tr><th>Yo</th><td>com<span class="accent">í</span> / viv<span class="accent">í</span></td></tr><tr><th>Tú</th><td>com<span class="accent">iste</span> / viv<span class="accent">iste</span></td></tr><tr><th>Él/Ella/Ud.</th><td>com<span class="accent">ió</span> / viv<span class="accent">ió</span></td></tr><tr><th>Nosotros</th><td>com<span class="accent">imos</span> / viv<span class="accent">imos</span></td></tr><tr><th>Ellos/Uds.</th><td>com<span class="accent">ieron</span> / viv<span class="accent">ieron</span></td></tr></table></div>
+                <div id="imp-ar" class="nested-tab-content"><h3>Imperfect: -AR Verbs (HABLAR)</h3><table><tr><th>Yo</th><td>habl<span class="accent">aba</span></td></tr><tr><th>Tú</th><td>habl<span class="accent">abas</span></td></tr><tr><th>Él/Ella/Ud.</th><td>habl<span class="accent">aba</span></td></tr><tr><th>Nosotros</th><td>habl<span class="accent">ábamos</span></td></tr><tr><th>Ellos/Uds.</th><td>habl<span class="accent">aban</span></td></tr></table></div>
+                <div id="imp-erir" class="nested-tab-content"><h3>Imperfect: -ER/-IR Verbs (COMER / VIVIR)</h3><table><tr><th>Yo</th><td>com<span class="accent">ía</span> / viv<span class="accent">ía</span></td></tr><tr><th>Tú</th><td>com<span class="accent">ías</span> / viv<span class="accent">ías</span></td></tr><tr><th>Él/Ella/Ud.</th><td>com<span class="accent">ía</span> / viv<span class="accent">ía</span></td></tr><tr><th>Nosotros</th><td>com<span class="accent">íamos</span> / viv<span class="accent">íamos</span></td></tr><tr><th>Ellos/Uds.</th><td>com<span class="accent">ían</span></td></tr></table></div>
+                
+                <h3 style="margin-top: 30px;" data-lang-key="form_irreg_title">Key Irregulars!</h3>
+                <p data-lang-key="form_irreg_desc">Good news! The imperfect tense has almost no irregulars. The preterite has more.</p>
+                <ul><li><strong data-lang-key="form_irreg_imp">IMPERFECT (Only 3):</strong><ul><li><strong>Ir:</strong> iba, ibas, iba, íbamos, iban</li><li><strong>Ser:</strong> era, eras, era, éramos, eran</li><li><strong>Ver:</strong> veía, veías, veía, veíamos, veían</li></ul></li><li><strong data-lang-key="form_irreg_pret">PRETERITE (Very common):</strong><ul><li><strong>Ser / Ir:</strong> fui, fuiste, fue, fuimos, fueron (They're identical!)</li><li><strong>Dar / Ver:</strong> di, diste, dio... / vi, viste, vio...</li><li><strong>Tener, Estar, Andar:</strong> tuve, estuve, anduve...</li></ul></li></ul>
+            </div>
+
+            <div id="tab-practica" class="main-tab-content">
+                <h2 data-lang-key="practice_title">Let's Practice! (Dynamic)</h2>
+                
+                <div class="quiz-section">
+                    <div class="section-header">
+                        <h3 data-lang-key="practice_quiz_title">Part 1: Quick Quiz</h3>
+                        <button id="generate-quiz" class="button-secondary refresh-btn" data-lang-key="btn_new_quiz">New Quiz</button>
+                    </div>
+                    <div class="explanatory-note" data-lang-key="practice_quiz_note">
+                        <strong>Note:</strong> The 🔊 audio for these questions reads the Spanish sentence with the verb in the infinitive (e.g., "ser", "hacer") so it doesn't give away the answer!
+                    </div>
+                    <div id="quiz-container"></div>
+                </div>
+
+                <div class="quiz-section">
+                    <div class="section-header">
+                        <h3 data-lang-key="practice_story_title">Part 2: Interactive Story</h3>
+                        <button id="generate-story" class="button-secondary refresh-btn" data-lang-key="btn_new_story">New Story</button>
+                    </div>
+                    <p data-lang-key="practice_story_desc">Complete the story by choosing the correct verb form.</p>
+                    <div id="story-container" class="interactive-story"></div>
+                    <button id="check-story-btn" class="button-primary" style="margin-top: 20px;" data-lang-key="practice_btn_check_story">Check Story</button>
+                    <div id="story-feedback"></div>
+                </div>
+
+                <div class="quiz-section">
+                    <div class="section-header">
+                        <h3 data-lang-key="practice_drag_title">Part 3: Story Sorter (Drag & Drop)</h3>
+                        <button id="generate-drag" class="button-secondary refresh-btn" data-lang-key="btn_new_sorter">New Sorter</button>
+                    </div>
+                    <p data-lang-key="practice_drag_desc">Drag each phrase to the category it best describes (the metaphor).</p>
+                    <div id="items-to-sort">
+                        <p><strong data-lang-key="practice_drag_items">Drag these phrases:</strong></p>
+                        <div id="drag-items-pool"></div>
+                    </div>
+                    <div class="sorter-container">
+                        <div class="dropzone" id="zone-preterito">
+                            <h4 data-lang-key="practice_drag_pret">📸 Photo (Preterite)</h4>
+                        </div>
+                        <div class="dropzone" id="zone-imperfecto">
+                            <h4 data-lang-key="practice_drag_imp">🎥 Movie (Imperfect)</h4>
+                        </div>
+                    </div>
+                    <button id="check-drag-btn" class="button-primary" style="margin-top: 20px;" data-lang-key="practice_btn_check_sort">Check Sorter</button>
+                    <div id="drag-feedback"></div>
+                </div>
+            </div>
+
+            <div id="tab-flashcards" class="main-tab-content">
+                <h2 data-lang-key="flash_title">Interactive Flashcards</h2>
+                <p style="text-align: center;" data-lang-key="flash_desc">Click the card to flip it. Use the buttons to navigate.</p>
+                
+                <div class="flashcard-app">
+                    <div class="flashcard-container">
+                        <div class="flashcard" id="flashcard">
+                            <div class="card-face card-front" id="card-front"></div>
+                            <div class="card-face card-back" id="card-back"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="flashcard-nav">
+                        <button onclick="prevCard()" class="button-secondary" data-lang-key="flash_btn_prev">Previous</button>
+                        <button onclick="flipCard()" class="button-primary btn-flip" data-lang-key="flash_btn_flip">Flip</button>
+                        <button onclick="nextCard()" class="button-secondary" data-lang-key="flash_btn_next">Next</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+    
+// --- BILINGUAL & THEME DATA ---
+
+const uiStrings = {
+    en: {
+        header_title: "Preterite vs. Imperfect",
+        header_subtitle: "Mastering the 📸 Photo vs. the 🎥 Movie",
+        tab_metaphor: "📸/🎥 The Metaphor",
+        tab_formation: "✍️ Formation",
+        tab_practice: "🧠 Interactive Practice",
+        tab_flashcards: "📇 Flashcards",
+        past: "Past",
+        present: "Present",
+        metaphor_title: "The Big Idea: Photo or Movie?",
+        metaphor_pret_desc: "Used for actions that are a <span class='accent'>single, complete, finished moment</span>. It's a dot on the timeline.",
+        metaphor_imp_desc: "Used for actions that were <span class='accent'>continuous, in-progress, or repeated</span>. It describes the scene (background).",
+        viz_real_title: "Real Visual Examples",
+        viz_caption_pret: "Preterite: A \"Snapshot\"",
+        viz_caption_pret_desc: "A single, completed event. <br><strong>Example:</strong> \"Ella <span class='accent'>se graduó</span>.\" (She graduated.)",
+        viz_caption_imp: "Imperfect: A \"Scene\"",
+        viz_caption_imp_desc: "A description of the background. <br><strong>Example:</strong> \"Los niños <span class='accent'>jugaban</span> y <span class='accent'>hacía</span> sol.\" (The kids were playing and it was sunny.)",
+        viz_title: "Interactive Timeline Visualizer",
+        viz_desc: "Click the buttons to see how each concept is 'drawn' on the timeline.",
+        viz_btn_pret: "See Preterite (Action 📸)",
+        viz_btn_imp: "See Imperfect (Scene 🎥)",
+        viz_btn_int: "See Interruption (🎥 + 📸)",
+        form_title: "How are they formed? (Conjugation)",
+        form_desc: "Use the tabs to see the regular endings.",
+        form_irreg_title: "Key Irregulars!",
+        form_irreg_desc: "Good news! The imperfect tense has almost no irregulars. The preterite has more.",
+        form_irreg_imp: "IMPERFECT (Only 3):",
+        form_irreg_pret: "PRETERITE (Very common):",
+        practice_title: "Let's Practice! (Dynamic)",
+        practice_quiz_title: "Part 1: Quick Quiz",
+        practice_quiz_note: "<strong>Note:</strong> The 🔊 audio for these questions reads the Spanish sentence with the verb in the infinitive (e.g., \"ser\", \"hacer\") so it doesn't give away the answer!",
+        practice_story_title: "Part 2: Interactive Story",
+        practice_story_desc: "Complete the story by choosing the correct verb form.",
+        practice_btn_check_story: "Check Story",
+        practice_drag_title: "Part 3: Story Sorter (Drag & Drop)",
+        practice_drag_desc: "Drag each phrase to the category it best describes (the metaphor).",
+        practice_drag_items: "Drag these phrases:",
+        practice_drag_pret: "📸 Photo (Preterite)",
+        practice_drag_imp: "🎥 Movie (Imperfect)",
+        practice_btn_check_sort: "Check Sorter",
+        btn_new_quiz: "New Quiz",
+        btn_new_story: "New Story",
+        btn_new_sorter: "New Sorter",
+        flash_title: "Interactive Flashcards",
+        flash_desc: "Click the card to flip it. Use the buttons to navigate.",
+        flash_btn_prev: "Previous",
+        flash_btn_flip: "Flip",
+        flash_btn_next: "Next",
+        // Feedback
+        feedback_correct: "Correct! 👍",
+        feedback_incorrect: "Try again. 😕",
+        feedback_check_story_perfect: "Perfect! You understood all the context!",
+        feedback_check_story_errors: "You have {correct} of {total} correct. Check the red ones!",
+        feedback_drag_perfect: "Excellent! All categories are correct!",
+        feedback_drag_errors: "You have {correct} of {total} correct. Check the red ones.",
+        
+        // --- CAMBIO v5.10: Ejemplos de Visualizador Coherentes ---
+        timeline_pret: "Preterite: A single, completed action. (The phone <strong>rang</strong> 📸)",
+        timeline_imp: "Imperfect: A continuous background scene. (I <strong>was sleeping</strong> 🎥)",
+        timeline_int: "Interruption: 'I <strong>was sleeping</strong>' (🎥) when 'the phone <strong>rang</strong>' (📸).",
+        
+        // (v5.4) Traducciones del Quiz
+        quiz_q1_trans: "It was 3 PM and it was sunny.",
+        quiz_q2_trans: "I was studying when the phone rang.",
+        quiz_q3_trans: "As a child, I always played with trains.",
+        quiz_q4_trans: "Yesterday, I went to the movies.",
+        quiz_q5_trans: "He was 10 years old.",
+        quiz_q6_trans: "I woke up, took a shower, and left.",
+        quiz_q7_trans: "I was sad because it was raining.",
+        quiz_q8_trans: "Suddenly, it started to rain.",
+        quiz_q9_trans: "We used to live in Madrid.",
+        quiz_q10_trans: "I finished my homework at 8:00.",
+        quiz_q11_trans: "The man was tall and had a beard.",
+        quiz_q12_trans: "While I was cooking, he arrived.",
+        quiz_q13_trans: "She bought a new car last week.",
+        quiz_q14_trans: "I didn't want to go (I refused).",
+        quiz_q15_trans: "I really wanted to go (my desire).",
+        quiz_q16_trans: "I met your brother at the party.",
+        quiz_q17_trans: "I already knew your brother.",
+        quiz_q18_trans: "It was a very dark night.",
+        quiz_q19_trans: "The class ended 10 minutes ago.",
+        quiz_q20_trans: "I found out what happened.",
+        quiz_q21_trans: "I was driving when I saw the accident."
+    },
+    es: {
+        header_title: "Pretérito vs. Imperfecto",
+        header_subtitle: "Dominando la 📸 Foto vs. la 🎥 Película",
+        tab_metaphor: "📸/🎥 La Metáfora",
+        tab_formation: "✍️ Formación",
+        tab_practice: "🧠 Práctica Interactiva",
+        tab_flashcards: "📇 Flashcards",
+        past: "Pasado",
+        present: "Presente",
+        metaphor_title: "La Gran Idea: ¿Foto o Película?",
+        metaphor_pret_desc: "Se usa para acciones que son un <span class='accent'>momento único, completo y terminado</span>. Es un punto en el tiempo.",
+        metaphor_imp_desc: "Se usa para acciones <span class='accent'>continuas, en progreso, o repetidas</span>. Describe la escena o el fondo (background).",
+        viz_real_title: "Ejemplos Visuales Reales",
+        viz_caption_pret: "Pretérito: Una \"Foto\"",
+        viz_caption_pret_desc: "Un evento único y completado. <br><strong>Ejemplo:</strong> \"Ella <span class='accent'>se graduó</span>.\"",
+        viz_caption_imp: "Imperfecto: Una \"Escena\"",
+        viz_caption_imp_desc: "Una descripción del fondo. <br><strong>Ejemplo:</strong> \"Los niños <span class='accent'>jugaban</span> y <span class='accent'>hacía</span> sol.\"",
+        viz_title: "Visualizador Interactivo de Línea de Tiempo",
+        viz_desc: "Haz clic en los botones para ver cómo se 'dibuja' cada concepto en la línea de tiempo.",
+        viz_btn_pret: "Ver Pretérito (Acción 📸)",
+        viz_btn_imp: "Ver Imperfecto (Escena 🎥)",
+        viz_btn_int: "Ver Interrupción (🎥 + 📸)",
+        form_title: "¿Cómo se forman? (Conjugación)",
+        form_desc: "Usa las pestañas para ver las terminaciones regulares.",
+        form_irreg_title: "¡Irregulares Clave!",
+        form_irreg_desc: "¡Buenas noticias! El imperfecto casi no tiene irregulares. El pretérito tiene más.",
+        form_irreg_imp: "IMPERFECTO (Solo 3):",
+        form_irreg_pret: "PRETÉRITO (Muy comunes):",
+        practice_title: "¡A Practicar! (Dinámico)",
+        practice_quiz_title: "Parte 1: Quiz Rápido",
+        practice_quiz_note: "<strong>Nota:</strong> ¡El audio 🔊 de estas preguntas lee la oración en español con el verbo en infinitivo (ej. \"ser\", \"hacer\") para no revelar la respuesta!",
+        practice_story_title: "Parte 2: Historia Interactiva",
+        practice_story_desc: "Completa la historia eligiendo la forma correcta del verbo.",
+        practice_btn_check_story: "Revisar Historia",
+        practice_drag_title: "Parte 3: Clasificador de Historias (Arrastrar)",
+        practice_drag_desc: "Arrastra cada frase a la categoría que mejor la describe (la metáfora).",
+        practice_drag_items: "Arrastra estas frases:",
+        practice_drag_pret: "📸 Foto (Pretérito)",
+        practice_drag_imp: "🎥 Película (Imperfecto)",
+        practice_btn_check_sort: "Revisar Clasificador",
+        btn_new_quiz: "Nuevo Quiz",
+        btn_new_story: "Nueva Historia",
+        btn_new_sorter: "Nuevo Clasificador",
+        flash_title: "Flashcards Interactivas",
+        flash_desc: "Haz clic en la tarjeta para voltearla. Usa los botones para navegar.",
+        flash_btn_prev: "Anterior",
+        flash_btn_flip: "Voltear",
+        flash_btn_next: "Siguiente",
+        // Feedback
+        feedback_correct: "¡Correcto! 👍",
+        feedback_incorrect: "Inténtalo de nuevo. 😕",
+        feedback_check_story_perfect: "¡Perfecto! ¡Has entendido todo el contexto!",
+        feedback_check_story_errors: "Tienes {correct} de {total} correctas. ¡Revisa las rojas!",
+        feedback_drag_perfect: "¡Excelente! ¡Todas las categorías son correctas!",
+        feedback_drag_errors: "Tienes {correct} de {total} correctas. Revisa las rojas.",
+
+        // --- CAMBIO v5.10: Ejemplos de Visualizador Coherentes ---
+        timeline_pret: "Pretérito: Una acción única y completada. (El teléfono <strong>sonó</strong> 📸)",
+        timeline_imp: "Imperfecto: Una escena continua de fondo. (Yo <strong>dormía</strong> 🎥)",
+        timeline_int: "Interrupción: 'Yo <strong>dormía</strong>' (🎥) cuando 'el teléfono <strong>sonó</strong>' (📸).",
+        
+        // (v5.4) Traducciones del Quiz (vacías en español)
+        quiz_q1_trans: "",
+        quiz_q2_trans: "",
+        quiz_q3_trans: "",
+        quiz_q4_trans: "",
+        quiz_q5_trans: "",
+        quiz_q6_trans: "",
+        quiz_q7_trans: "",
+        quiz_q8_trans: "",
+        quiz_q9_trans: "",
+        quiz_q10_trans: "",
+        quiz_q11_trans: "",
+        quiz_q12_trans: "",
+        quiz_q13_trans: "",
+        quiz_q14_trans: "",
+        quiz_q15_trans: "",
+        quiz_q16_trans: "",
+        quiz_q17_trans: "",
+        quiz_q18_trans: "",
+        quiz_q19_trans: "",
+        quiz_q20_trans: "",
+        quiz_q21_trans: ""
+    }
+};
+
+let currentLanguage = 'en';
+
+// --- BANCOS DE PREGUNTAS (DATA) ---
+
+// --- Banco de Flashcards (v5.0) ---
+const flashcardData = [
+    { en: "We went to the beach yesterday.", es: "Ayer fuimos a la playa.", explanation: "Preterite: Completed action 📸" },
+    { en: "I used to go to the beach every summer.", es: "Yo iba a la playa todos los veranos.", explanation: "Imperfect: Habitual/repeated action 🎥" },
+    { en: "It was 10:00 PM.", es: "Eran las diez de la noche.", explanation: "Imperfect: Time/Setting 🎥" },
+    { en: "The movie started at 10:00 PM.", es: "La película empezó a las diez.", explanation: "Preterite: Completed action 📸" },
+    { en: "He was tall and had blue eyes.", es: "Él era alto y tenía ojos azules.", explanation: "Imperfect: Physical description 🎥" },
+    { en: "I found out (learned) the truth.", es: "Yo supe la verdad.", explanation: "Preterite: 'Saber' as 'to find out' 📸" },
+    { en: "I already knew the truth.", es: "Yo ya sabía la verdad.", explanation: "Imperfect: 'Saber' as a mental state 🎥" },
+    { en: "We met them at the party.", es: "Los conocimos en la fiesta.", explanation: "Preterite: 'Conocer' as 'to meet' 📸" },
+    { en: "We knew them well.", es: "Los conocíamos bien.", explanation: "Imperfect: 'Conocer' as 'to be familiar with' 🎥" },
+    { en: "I tried to call you (and did it).", es: "Te quise llamar.", explanation: "Preterite: 'Querer' as 'to try' 📸" },
+    { en: "I wanted to call you (my feeling).", es: "Te quería llamar.", explanation: "Imperfect: 'Querer' as 'to want/desire' 🎥" },
+    { en: "He refused to go.", es: "Él no quiso ir.", explanation: "Preterite: 'No querer' as 'to refuse' 📸" },
+    { en: "I managed to lift it.", es: "Pude levantarlo.", explanation: "Preterite: 'Poder' as 'to manage/succeed' 📸" },
+    { en: "I was able to lift it (I had the ability).", es: "Podía levantarlo.", explanation: "Imperfect: 'Poder' as 'to have ability' 🎥" },
+    { en: "She read the book last night.", es: "Ella leyó el libro anoche.", explanation: "Preterite: Completed action 📸" },
+    { en: "She was reading when I arrived.", es: "Ella leía cuando llegué.", explanation: "Imperfect: Action in progress (interrupted) 🎥" }
+];
+
+// --- Banco de Quiz Rápido (v5.9 - Emojis en lugar de imágenes) ---
+const quizBank = [
+    { id: "q1", question_es: "(Ser) las tres y (hacer) sol.", options: ["Fueron / hizo", "Eran / hacía"], correct: 1, explanation: "Double imperfect! Use W.A.T.E.R.S. (Time & Weather) to describe a scene.", emoji: "🕒☀️" },
+    { id: "q2", question_es: "Yo (estudiar) cuando el teléfono (sonar).", options: ["estudié / sonaba", "estudiaba / sonó"], correct: 1, explanation: "The interruption! The 'movie' 🎥 was 'estudiaba'. The 'photo' 📸 that interrupted was 'sonó'.", emoji: "📚...📞!" },
+    { id: "q3", question_es: "De niño, yo siempre (jugar) con trenes.", options: ["jugué", "jugaba"], correct: 1, explanation: "Imperfect for habitual/repeated actions in the past ('used to').", emoji: "👶🚂" },
+    { id: "q4", question_es: "Ayer, yo (ir) al cine.", options: ["fui", "iba"], correct: 0, explanation: "'Ayer' (Yesterday) signals a specific, completed action. It's a 'photo' 📸." },
+    { id: "q5", question_es: "Él (tener) 10 años.", options: ["tuvo", "tenía"], correct: 1, explanation: "Imperfect is always used for telling age in the past (Age in W.A.T.E.R.S.)." },
+    { id: "q6", question_es: "Me (levantarse), me (ducharse) y (salir).", options: ["levantaba, duchaba, salía", "levanté, duché, salí"], correct: 1, explanation: "Preterite is used for a series of completed actions (a sequence of 'photos' 📸)." },
+    { id: "q7", question_es: "(Estar) triste porque (llover).", options: ["Estuve / llovió", "Estaba / llovía"], correct: 1, explanation: "Double imperfect! Describing an emotion (Estar) and the weather (llover) are both 'movie' 🎥 descriptions." },
+    { id: "q8", question_es: "De repente, (empezar) a llover.", options: ["empezó", "empezaba"], correct: 0, explanation: "'De repente' (Suddenly) signals a single, interrupting action. It's a 'photo' 📸." },
+    { id: "q9", question_es: "Nosotros (vivir) en Madrid.", options: ["vivimos", "vivíamos"], correct: 1, explanation: "Imperfect for a continuous past state or habit ('used to live'). No specific end point is mentioned. 🎥" },
+    { id: "q10", question_es: "Yo (terminar) mi tarea a las 8:00.", options: ["terminé", "terminaba"], correct: 0, explanation: "A specific, completed action at a definite time. It's a 'photo' 📸." },
+    { id: "q11", question_es: "El hombre (ser) alto y (tener) barba.", options: ["fue / tuvo", "era / tenía"], correct: 1, explanation: "Double imperfect! Used for physical descriptions in the past. 🎥" },
+    { id: "q12", question_es: "Mientras yo (cocinar), él (llegar).", options: ["cocinaba / llegó", "cociné / llegaba"], correct: 0, explanation: "The 'movie' 🎥 (cocinaba) was interrupted by the 'photo' 📸 (llegó)." },
+    { id: "q13", question_es: "Ella (comprar) un coche nuevo la semana pasada.", options: ["compró", "compraba"], correct: 0, explanation: "'La semana pasada' (Last week) sets a specific, completed time frame for the action. 📸" },
+    { id: "q14", question_es: "Yo no (querer) ir.", options: ["quise", "quería"], correct: 0, explanation: "Preterite (no quise) means 'I refused'. Imperfect (no quería) means 'I didn't feel like going'." },
+    { id: "q15", question_es: "Yo (querer) ir.", options: ["quise", "quería"], correct: 1, explanation: "Imperfect (quería) describes a mental state or desire in the past, not an action. 🎥" },
+    { id: "q16", question_es: "Yo (conocer) a tu hermano en la fiesta.", options: ["conocí", "conocía"], correct: 0, explanation: "Preterite (conocí) means 'I met' (the action of meeting for the first time). 📸" },
+    { id: "q17", question_es: "Yo ya (conocer) a tu hermano.", options: ["conocí", "conocía"], correct: 1, explanation: "Imperfect (conocía) means 'I knew' (the state of being familiar with). 🎥" },
+    { id: "q18", question_es: "(Ser) una noche muy oscura.", options: ["Fue", "Era"], correct: 1, explanation: "Imperfect (Era) is used to describe the setting or background scene. 🎥" },
+    { id: "q19", question_es: "La clase (terminar) hace 10 minutos.", options: ["terminó", "terminaba"], correct: 0, explanation: "A completed action at a specific, recent past time. 📸" },
+    { id: "q20", question_es: "Yo (saber) lo que pasó.", options: ["supe", "sabía"], correct: 0, explanation: "Preterite (supe) means 'I found out'. Imperfect (sabía) means 'I knew'. 📸" },
+    { id: "q21", question_es: "Yo (conducir) cuando (ver) el accidente.", options: ["conducía / vi", "conduje / veía"], correct: 0, explanation: "The 'movie' (conducía) was interrupted by the 'photo' (vi).", emoji: "🚗💥" }
+];
+
+// --- Banco de Historias (v5.2) ---
+const storyBank = [
+    {
+        id: "story1",
+        total: 7,
+        html: `
+            <span>Ayer</span> 
+            <select id="story1-1" data-exp-en="Preterite for 'yesterday', a specific completed time." data-exp-es="Pretérito para 'ayer', un tiempo específico y completado."><option value="incorrecto">era</option><option value="correcto">fue</option></select>
+            <span>un día interesante.</span> 
+            <select id="story1-2" data-exp-en="Imperfect for weather description (setting the scene)." data-exp-es="Imperfecto para describir el clima (el escenario)."><option value="correcto">Hacía</option><option value="incorrecto">Hizo</option></select>
+            <span>frío y</span> 
+            <select id="story1-3" data-exp-en="Imperfect for a continuous action in the background." data-exp-es="Imperfecto para una acción continua en el fondo."><option value="correcto">llovía</option><option value="incorrecto">llovió</option></select>
+            <span>un poco. Yo</span> 
+            <select id="story1-4" data-exp-en="Imperfect for the 'movie' (background action)." data-exp-es="Imperfecto para la 'película' (acción de fondo)."><option value="correcto">caminaba</option><option value="incorrecto">caminé</option></select>
+            <span>por el parque cuando, de repente,</span> 
+            <select id="story1-5" data-exp-en="Preterite for the 'photo' (a sudden, interrupting action)." data-exp-es="Pretérito para la 'foto' (una acción repentina que interrumpe)."><option value="incorrecto">veía</option><option value="correcto">vi</option></select>
+            <span>a mi amigo Carlos. Él</span> 
+            <select id="story1-6" data-exp-en="Imperfect progressive for an action in progress." data-exp-es="Imperfecto progresivo para una acción en progreso."><option value="incorrecto">estuvo hablando</option><option value="correcto">estaba hablando</option></select>
+            <span>por teléfono, así que yo</span> 
+            <select id="story1-7" data-exp-en="Preterite for a single, completed action." data-exp-es="Pretérito para una acción única y completada."><option value="incorrecto">gritaba</option><option value="correcto">grité</option></select>
+            <span>su nombre.</span>
+        `
+    },
+    {
+        id: "story2",
+        total: 7,
+        html: `
+            <span>Cuando yo</span> 
+            <select id="story2-1" data-exp-en="Imperfect for age/descriptions ('when I was...')." data-exp-es="Imperfecto para edad/descripciones ('cuando yo era...')."><option value="incorrecto">fui</option><option value="correcto">era</option></select>
+            <span>joven, mi familia siempre</span> 
+            <select id="story2-2" data-exp-en="Imperfect for habitual actions ('always')." data-exp-es="Imperfecto para acciones habituales ('siempre')."><option value="correcto">iba</option><option value="incorrecto">fue</option></select>
+            <span>a las montañas. Yo</span> 
+            <select id="story2-3" data-exp-en="Imperfect for a mental state ('I remembered')." data-exp-es="Imperfecto para un estado mental ('Yo recordaba')."><option value="correcto">recordaba</option><option value="incorrecto">recordé</option></select>
+            <span>un viaje...</span> 
+            <select id="story2-4" data-exp-en="Imperfect for describing the scene ('it was snowing')." data-exp-es="Imperfecto para describir la escena ('nevaba')."><option value="incorrecto">nevó</option><option value="correcto">nevaba</option></select>
+            <span>mucho. Mientras nosotros</span> 
+            <select id="story2-5" data-exp-en="Imperfect for a background action ('we were playing')." data-exp-es="Imperfecto para una acción de fondo ('jugábamos')."><option value="correcto">jugábamos</option><option value="incorrecto">jugamos</option></select>
+            <span>afuera, mi papá</span> 
+            <select id="story2-6" data-exp-en="Imperfect, another background action ('was preparing')." data-exp-es="Imperfecto, otra acción de fondo ('preparaba')."><option value="correcto">preparaba</option><option value="incorrecto">preparó</option></select>
+            <span>chocolate caliente. Esa noche, nosotros</span> 
+            <select id="story2-7" data-exp-en="Preterite for a completed action ('we watched')." data-exp-es="Pretérito para una acción completada ('vimos')."><option value="incorrecto">veíamos</option><option value="correcto">vimos</option></select>
+            <span>una película.</span>
+        `
+    },
+    {
+        id: "story3",
+        total: 5,
+        html: `
+            <span>La fiesta</span> 
+            <select id="story3-1" data-exp-en="Imperfect to describe the scene ('was fun')." data-exp-es="Imperfecto para describir la escena ('era divertida')."><option value="correcto">era</option><option value="incorrecto">fue</option></select>
+            <span>divertida. La música</span> 
+            <select id="story3-2" data-exp-en="Imperfect for background description." data-exp-es="Imperfecto para descripción de fondo."><option value="correcto">sonaba</option><option value="incorrecto">sonó</option></select>
+            <span>y la gente</span> 
+            <select id="story3-3" data-exp-en="Imperfect for background action ('were talking')." data-exp-es="Imperfecto para acción de fondo ('hablaban')."><option value="correcto">hablaban</option><option value="incorrecto">hablaron</option></select>
+            <span>. A las 10 PM, Ana</span> 
+            <select id="story3-4" data-exp-en="Preterite for a specific, completed action." data-exp-es="Pretérito para una acción específica y completada."><option value="incorrecto">llegaba</option><option value="correcto">llegó</option></select>
+            <span>. Ella</span> 
+            <select id="story3-5" data-exp-en="Preterite for a completed action." data-exp-es="Pretérito para una acción completada."><option value="incorrecto">traía</option><option value="correcto">trajo</option></select>
+            <span>un pastel.</span>
+        `
+    },
+    {
+        id: "story4",
+        total: 5,
+        html: `
+            <span>Anoche yo</span> 
+            <select id="story4-1" data-exp-en="Preterite (Conocí) = I met." data-exp-es="Pretérito (Conocí) = 'I met' (acción)."><option value="incorrecto">conocía</option><option value="correcto">conocí</option></select>
+            <span>a una persona nueva. Ya</span> 
+            <select id="story4-2" data-exp-en="Imperfect (Sabía) = I knew (mental state)." data-exp-es="Imperfecto (Sabía) = 'I knew' (estado mental)."><option value="correcto">sabía</option><option value="incorrecto">supe</option></select>
+            <span>quién era. De repente,</span> 
+            <select id="story4-3" data-exp-en="Preterite (Supe) = I found out." data-exp-es="Pretérito (Supe) = 'I found out' (acción)."><option value="incorrecto">sabía</option><option value="correcto">supe</option></select>
+            <span>que ella también</span> 
+            <select id="story4-4" data-exp-en="Imperfect (Quería) = desired (emotion)." data-exp-es="Imperfecto (Quería) = deseo (emoción)."><option value="correcto">quería</option><option value="incorrecto">quiso</option></select>
+            <span>estudiar medicina.</span>
+        `
+    },
+    {
+        id: "story5",
+        total: 4,
+        html: `
+            <select id="story5-1" data-exp-en="Imperfect for time." data-exp-es="Imperfecto para la hora."><option value="incorrecto">Fue</option><option value="correcto">Era</option></select>
+            <span>la medianoche. Yo</span> 
+            <select id="story5-2" data-exp-en="Imperfect ('couldn't' as a state)." data-exp-es="Imperfecto ('no podía' como estado)."><option value="correcto">no podía</option><option value="incorrecto">no pude</option></select>
+            <span>dormir porque</span> 
+            <select id="story5-3" data-exp-en="Imperfect for an emotion/state." data-exp-es="Imperfecto para una emoción/estado."><option value="correcto">estaba</option><option value="incorrecto">estuve</option></select>
+            <span>preocupado. Finalmente, a las 3 AM,</span> 
+            <select id="story5-4" data-exp-en="Preterite for a completed action." data-exp-es="Pretérito para una acción completada."><option value="incorrecto">me dormía</option><option value="correcto">me dormí</option></select>
+            <span>.</span>
+        `
+    }
+];
+
+// --- Banco de Drag & Drop (v5.0) ---
+const dragDropBank = [
+    { id: 1, text: "De niño, siempre jugaba fútbol.", tense: "imperfecto", exp_en: "Habitual action ('always played'). 🎥", exp_es: "Acción habitual ('siempre jugaba'). 🎥" },
+    { id: 2, text: "Anoche, comí una pizza entera.", tense: "preterito", exp_en: "Completed action at a specific time ('anoche'). 📸", exp_es: "Acción completada en un tiempo específico ('anoche'). 📸" },
+    { id: 3, text: "Hacía mucho viento.", tense: "imperfecto", exp_en: "Weather description (setting the scene). 🎥", exp_es: "Descripción del clima (escenario). 🎥" },
+    { id: 4, text: "La guerra terminó en 1821.", tense: "preterito", exp_en: "A specific, historical event with a clear end. 📸", exp_es: "Un evento histórico específico con un fin claro. 📸" },
+    { id: 5, text: "El sol brillaba y los pájaros cantaban.", tense: "imperfecto", exp_en: "Background description of a scene. 🎥", exp_es: "Descripción de fondo de una escena. 🎥" },
+    { id: 6, text: "De repente, el coche explotó.", tense: "preterito", exp_en: "A sudden, interrupting action ('de repente'). 📸", exp_es: "Una acción repentina que interrumpe ('de repente'). 📸" },
+    { id: 7, text: "Yo tenía 15 años.", tense: "imperfecto", exp_en: "Telling age in the past (W.A.T.E.R.S.). 🎥", exp_es: "Decir la edad en el pasado (W.A.T.E.R.S.). 🎥" },
+    { id: 8, text: "Fui a España tres veces.", tense: "preterito", exp_en: "A completed action, even if repeated, is seen as a series of 'photos'. 📸", exp_es: "Una acción completada, aunque repetida, se ve como una serie de 'fotos'. 📸" },
+    { id: 9, text: "Mi abuelo era muy alto.", tense: "imperfecto", exp_en: "Physical description of a person. 🎥", exp_es: "Descripción física de una persona. 🎥" },
+    { id: 10, text: "La clase empezó a las 9:00.", tense: "preterito", exp_en: "A specific start time for an event. 📸", exp_es: "Una hora de inicio específica para un evento. 📸" },
+    { id: 11, text: "Mientras yo dormía...", tense: "imperfecto", exp_en: "An action in progress in the background ('while...'). 🎥", exp_es: "Una acción en progreso en el fondo ('mientras...'). 🎥" },
+    { id: 12, text: "Se casaron el 5 de mayo.", tense: "preterito", exp_en: "A specific date for a completed event. 📸", exp_es: "Una fecha específica para un evento completado. 📸" },
+    { id: 13, text: "Generalmente, nos despertábamos tarde.", tense: "imperfecto", exp_en: "A habitual action in the past ('generally'). 🎥", exp_es: "Una acción habitual en el pasado ('generalmente'). 🎥" },
+    { id: 14, text: "Él abrió la puerta y miró afuera.", tense: "preterito", exp_en: "A series of completed actions (A.S.A.P.). 📸", exp_es: "Una serie de acciones completadas (A.S.A.P.). 📸" },
+    { id: 15, text: "Eran las cuatro de la tarde.", tense: "imperfecto", exp_en: "Telling time in the past (W.A.T.E.R.S.). 🎥", exp_es: "Decir la hora en el pasado (W.A.T.E.R.S.). 🎥" },
+    { id: 16, text: "Yo estaba muy cansado.", tense: "imperfecto", exp_en: "Describing an emotion or state (W.A.T.E.R.S.). 🎥", exp_es: "Describir una emoción o estado (W.A.T.E.R.S.). 🎥" },
+    { id: 17, text: "El ladrón robó el banco ayer.", tense: "preterito", exp_en: "Specific event, completed ('ayer'). 📸", exp_es: "Evento específico, completado ('ayer'). 📸" },
+    { id: 18, text: "La casa era blanca y tenía un jardín.", tense: "imperfecto", exp_en: "Description of an object/scene. 🎥", exp_es: "Descripción de un objeto/escena. 🎥" },
+    { id: 19, text: "Recibí una A en el examen.", tense: "preterito", exp_en: "A single, completed event. 📸", exp_es: "Un evento único y completado. 📸" },
+    { id: 20, text: "Todos los días, él leía el periódico.", tense: "imperfecto", exp_en: "Habitual action ('todos los días'). 🎥", exp_es: "Acción habitual ('todos los días'). 🎥" },
+    { id: 21, text: "La película fue un éxito.", tense: "preterito", exp_en: "A summary judgment of a completed event. 📸", exp_es: "Un juicio sumario de un evento completado. 📸" },
+    { id: 22, text: "El bebé lloraba sin parar.", tense: "imperfecto", exp_en: "A continuous action without a clear end. 🎥", exp_es: "Una acción continua sin un fin claro. 🎥" },
+    { id: 23, text: "Compramos la casa en 2010.", tense: "preterito", exp_en: "A specific, completed action in the past. 📸", exp_es: "Una acción específica y completada en el pasado. 📸" },
+    { id: 24, text: "Él siempre me ayudaba.", tense: "imperfecto", exp_en: "Habitual action ('siempre'). 🎥", exp_es: "Acción habitual ('siempre'). 🎥" },
+    { id: 25, text: "Vi la película anoche.", tense: "preterito", exp_en: "Specific, completed action ('anoche'). 📸", exp_es: "Acción específica y completada ('anoche'). 📸" },
+    { id: 26, text: "No me sentía bien.", tense: "imperfecto", exp_en: "Describing a physical or emotional state. 🎥", exp_es: "Describir un estado físico o emocional. 🎥" },
+    { id: 27, text: "Corrieron un maratón el sábado.", tense: "preterito", exp_en: "A single, completed event ('el sábado'). 📸", exp_es: "Un evento único y completado ('el sábado'). 📸" },
+    { id: 28, text: "La ciudad era muy ruidosa.", tense: "imperfecto", exp_en: "Description of a place. 🎥", exp_es: "Descripción de un lugar. 🎥" },
+    { id: 29, text: "Me caí de la bicicleta.", tense: "preterito", exp_en: "A single, sudden action ('I fell'). 📸", exp_es: "Una acción única y repentina ('me caí'). 📸" },
+    { id: 30, text: "Yo no sabía la respuesta.", tense: "imperfecto", exp_en: "A mental state ('I didn't know'). 🎥", exp_es: "Un estado mental ('yo no sabía'). 🎥" }
+];
+
+
+// --- LÓGICA DE LA APLICACIÓN ---
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- Lógica de Pestañas ---
+    window.changeMainTab = function(evt, tabId) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("main-tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("main-tab-link");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabId).style.display = "block";
+        evt.currentTarget.className += " active";
+        
+        // (v5.5) Carga la práctica la primera vez que se abre esa pestaña
+        if (tabId === 'tab-practica' && !document.getElementById('quiz-container').hasChildNodes()) {
+            generateQuiz();
+            generateStory();
+            generateDragDrop();
+        }
+    }
+
+    window.openConjugationTab = function(evt, tabName) {
+        var i, tabcontent, tablinks;
+        var parentTab = document.getElementById('tab-formacion');
+        tabcontent = parentTab.getElementsByClassName("nested-tab-content");
+        for (i = 0; i < tabcontent.length; i++) { tabcontent[i].style.display = "none"; }
+        tablinks = parentTab.getElementsByClassName("nested-tab-link");
+        for (i = 0; i < tablinks.length; i++) { tablinks[i].className = tablinks[i].className.replace(" active", ""); }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    // --- Lógica de Idioma y Tema ---
+    const langToggle = document.getElementById('lang-toggle');
+    const themeToggle = document.getElementById('theme-toggle');
+
+    langToggle.addEventListener('click', () => {
+        currentLanguage = (currentLanguage === 'en') ? 'es' : 'en';
+        updateLanguage();
+    });
+
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+    });
+
+    function updateLanguageForElement(element) {
+        const strings = uiStrings[currentLanguage];
+        element.querySelectorAll('[data-lang-key]').forEach(el => {
+            const key = el.dataset.langKey;
+            
+            if (strings[key] !== undefined) {
+                el.innerHTML = strings[key];
+            }
+        });
+    }
+
+    function updateLanguage() {
+        document.documentElement.lang = currentLanguage;
+        updateLanguageForElement(document.body);
+        
+        if (document.getElementById('tab-practica').style.display === 'block') {
+            // Actualiza el idioma del quiz
+            document.querySelectorAll('.quiz-question').forEach(qEl => {
+                const qId = qEl.dataset.quizId;
+                const quizData = quizBank.find(q => q.id === qId);
+                if (quizData) {
+                    const qTransEl = qEl.querySelector('span.quiz-translation');
+                    const qExplEl = qEl.querySelector('div.explanation-text');
+                    
+                    const translationKey = `quiz_${quizData.id}_trans`;
+                    if (qTransEl) {
+                        qTransEl.innerHTML = uiStrings[currentLanguage][translationKey] || '';
+                    }
+                    
+                    if (qExplEl) {
+                        qExplEl.innerHTML = `<strong>${currentLanguage === 'en' ? 'Explanation' : 'Explicación'}:</strong> ${quizData.explanation}`;
+                    }
+                }
+            });
+            
+            // Actualiza las explicaciones de la historia si ya están visibles
+            storyContainer.querySelectorAll('.story-explanation').forEach(expl => {
+                const select = expl.previousElementSibling;
+                if (select && select.tagName === 'SELECT') {
+                    const expKey = (currentLanguage === 'en') ? 'expEn' : 'expEs';
+                    expl.textContent = `(${select.dataset[expKey]})`;
+                }
+            });
+
+            // Actualiza las explicaciones de Drag & Drop si ya están visibles
+            document.querySelectorAll('.draggable').forEach(item => {
+                const explEl = item.querySelector('.drag-explanation');
+                if (explEl) {
+                    const expKey = (currentLanguage === 'en') ? 'explanationEn' : 'explanationEs';
+                    explEl.textContent = `(${item.dataset[expKey]})`;
+                }
+            });
+        }
+
+        loadCard(currentCard);
+    }
+    
+    // --- Lógica de Síntesis de Voz (TTS) v5.3 ---
+    const synth = window.speechSynthesis;
+    let voices = [];
+
+    function loadVoices() {
+        voices = synth.getVoices();
+    }
+    
+    loadVoices();
+    if (synth.onvoiceschanged !== undefined) {
+        synth.onvoiceschanged = loadVoices;
+    }
+
+    function speak(text, lang = 'es-ES') {
+        if (synth.speaking) {
+            synth.cancel();
+        }
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang;
+        utterance.rate = 0.9;
+
+        let bestVoice = voices.find(v => v.lang.startsWith('es') && v.name.includes('Google'));
+        if (!bestVoice) {
+            bestVoice = voices.find(v => v.lang.startsWith('es') && v.localService === false);
+        }
+        if (!bestVoice) {
+            bestVoice = voices.find(v => v.lang.startsWith('es') && (v.name.includes('Apple') || v.name.includes('Microsoft')));
+        }
+        if (!bestVoice) {
+            bestVoice = voices.find(v => v.lang.startsWith('es-ES') || v.lang.startsWith('es-MX'));
+        }
+        if (!bestVoice) {
+            bestVoice = voices.find(v => v.lang.startsWith('es'));
+        }
+
+        if (bestVoice) {
+            utterance.voice = bestVoice;
+        }
+
+        synth.speak(utterance);
+    }
+    
+    // --- CAMBIO v5.10: Lógica de Clic de Audio Separada ---
+    
+    // Listener para todos los íconos de audio que NO están en una flashcard
+    document.body.addEventListener('click', function(e) {
+        if (e.target.classList.contains('tts-icon') && !e.target.closest('#flashcard')) {
+            // Solo reproduce si es un ícono de audio Y NO está dentro de la flashcard
+            const textToSpeak = e.target.dataset.tts;
+            if (textToSpeak) {
+                speak(textToSpeak);
+            }
+        }
+    });
+
+    // --- Pestaña 1: Visualizador ---
+    window.triggerAnimation = function(type) {
+        var timeline = document.getElementById('interactive-timeline');
+        var explanation = document.getElementById('timeline-explanation');
+        const lang = currentLanguage;
+        
+        timeline.innerHTML = `
+            <span class="timeline-label past" data-lang-key="past">${uiStrings[lang].past}</span>
+            <span class="timeline-label present" data-lang-key="present">${uiStrings[lang].present}</span>
+        `;
+        
+        // --- CAMBIO v5.10: Lógica de Visualizador Coherente ---
+        if (type === 'pretérito') {
+            timeline.innerHTML += '<div class="dot" style="display: block;"></div>';
+            explanation.innerHTML = uiStrings[lang].timeline_pret;
+        } else if (type === 'imperfecto') {
+            timeline.innerHTML += '<div class="wave" style="display: block;"></div>';
+            explanation.innerHTML = uiStrings[lang].timeline_imp;
+        } else if (type === 'interrupción') {
+            timeline.innerHTML += `<div class="wave interrupted" style="display: block;"></div><div class="dot interrupter" style="display: block;"></div>`;
+            explanation.innerHTML = uiStrings[lang].timeline_int; // Ejemplo de "dormía/sonó"
+        }
+    }
+
+    // --- Pestaña 3: Lógica de Práctica Dinámica ---
+    
+    // (v5.5) Llama a los botones individuales
+    const quizContainer = document.getElementById('quiz-container');
+    const storyContainer = document.getElementById('story-container');
+    const checkStoryBtn = document.getElementById('check-story-btn');
+    const storyFeedback = document.getElementById('story-feedback');
+    const dragPool = document.getElementById('drag-items-pool');
+    const checkDragBtn = document.getElementById('check-drag-btn');
+    const dragFeedback = document.getElementById('drag-feedback');
+    
+    // Asignación de botones individuales
+    document.getElementById('generate-quiz').addEventListener('click', generateQuiz);
+    document.getElementById('generate-story').addEventListener('click', generateStory);
+    document.getElementById('generate-drag').addEventListener('click', generateDragDrop);
+
+    let currentDragItems = [];
+    let currentStoryData = {};
+
+    // 1. Generar Quiz (v5.9 - Emojis)
+    function generateQuiz() {
+        quizContainer.innerHTML = '';
+        const selectedQuestions = shuffleArray(quizBank).slice(0, 3);
+        
+        selectedQuestions.forEach((q, index) => {
+            const qId = `gen_q_${index}`;
+            const questionText_es = q.question_es;
+            const ttsHtml = `<span class="tts-icon" data-tts="${q.question_es}">🔊</span>`;
+            
+            const translationKey = `quiz_${q.id}_trans`;
+            const translationText = uiStrings[currentLanguage][translationKey] || '';
+            const translationHtml = `<span class="quiz-translation" data-lang-key="${translationKey}">${translationText}</span>`;
+
+            // (v5.9): Añadir HTML de emoji si existe
+            const emojiHtml = q.emoji ? `<span class="quiz-image-placeholder">${q.emoji}</span>` : '';
+
+            const optionsHtml = q.options.map((opt, i) => 
+                `<button onclick="checkQuizAnswer('${qId}', ${i === q.correct})">${opt}</button>`
+            ).join('');
+            
+            quizContainer.innerHTML += `
+                <div class="quiz-question" data-quiz-id="${q.id}" data-q-index="${index + 1}">
+                    ${emojiHtml}
+                    <p class="question-text">${index + 1}. ${questionText_es} ${ttsHtml}</p>
+                    ${translationHtml}
+                    ${optionsHtml}
+                    <span id="feedback-${qId}" class="feedback"></span>
+                    <div id="explanation-${qId}" class="explanation-text" style="display:none; margin-top:10px;">
+                        <strong>${currentLanguage === 'en' ? 'Explanation' : 'Explicación'}:</strong> ${q.explanation}
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    window.checkQuizAnswer = function(questionId, isCorrect) {
+        var feedback = document.getElementById('feedback-' + questionId);
+        var explanation = document.getElementById('explanation-' + questionId);
+        
+        explanation.style.display = 'block';
+
+        if (isCorrect) {
+            feedback.textContent = uiStrings[currentLanguage].feedback_correct;
+            feedback.className = 'feedback correct';
+        } else {
+            feedback.textContent = uiStrings[currentLanguage].feedback_incorrect;
+            feedback.className = 'feedback incorrect';
+        }
+    }
+
+    // 2. Generar Historia
+    function generateStory() {
+        currentStoryData = storyBank[Math.floor(Math.random() * storyBank.length)];
+        storyContainer.innerHTML = currentStoryData.html;
+        storyFeedback.innerHTML = '';
+        storyFeedback.className = '';
+        checkStoryBtn.onclick = checkStory;
+    }
+
+    function checkStory() {
+        let correctCount = 0;
+        let totalQuestions = currentStoryData.total;
+        
+        storyContainer.querySelectorAll('.story-explanation').forEach(e => e.remove());
+
+        for (var i = 1; i <= totalQuestions; i++) {
+            var select = document.getElementById(`${currentStoryData.id}-${i}`);
+            if (!select) continue;
+
+            var value = select.options[select.selectedIndex].value;
+            
+            const expKey = (currentLanguage === 'en') ? 'expEn' : 'expEs';
+            const explanationText = select.dataset[expKey] || "No explanation.";
+            const explanationEl = document.createElement('span');
+            explanationEl.className = 'story-explanation';
+            explanationEl.textContent = `(${explanationText})`;
+            
+            select.parentNode.insertBefore(explanationEl, select.nextSibling);
+
+            if (value === 'correcto') {
+                correctCount++;
+                select.style.borderColor = "var(--green)";
+            } else {
+                select.style.borderColor = "var(--red)";
+            }
+        }
+        
+        if (correctCount === totalQuestions) {
+            storyFeedback.textContent = uiStrings[currentLanguage].feedback_check_story_perfect;
+            storyFeedback.className = "correct";
+        } else {
+            storyFeedback.textContent = uiStrings[currentLanguage].feedback_check_story_errors
+                .replace('{correct}', correctCount)
+                .replace('{total}', totalQuestions);
+            storyFeedback.className = "incorrect";
+        }
+    }
+
+    // 3. Generar Drag & Drop
+    function generateDragDrop() {
+        dragPool.innerHTML = '';
+        dragFeedback.innerHTML = '';
+        dragFeedback.className = '';
+        document.querySelectorAll('.dropzone .draggable').forEach(item => item.remove());
+        
+        const preteritoItems = shuffleArray(dragDropBank.filter(i => i.tense === 'preterito')).slice(0, 4);
+        const imperfectoItems = shuffleArray(dragDropBank.filter(i => i.tense === 'imperfecto')).slice(0, 4);
+        currentDragItems = shuffleArray([...preteritoItems, ...imperfectoItems]);
+        
+        currentDragItems.forEach(item => {
+            const ttsHtml = `<span class="tts-icon" data-tts="${item.text}">🔊</span>`;
+            dragPool.innerHTML += `
+                <div class="draggable" draggable="true" id="drag-${item.id}" 
+                     data-tense="${item.tense}" 
+                     data-explanation-en="${item.exp_en}" 
+                     data-explanation-es="${item.exp_es}">
+                    ${item.text} ${ttsHtml}
+                </div>`;
+        });
+        
+        addDragDropListeners();
+    }
+    
+    function addDragDropListeners() {
+        const draggables = document.querySelectorAll('.draggable');
+        const dropzones = document.querySelectorAll('.dropzone');
+
+        draggables.forEach(draggable => {
+            draggable.addEventListener('dragstart', () => draggable.classList.add('dragging'));
+            draggable.addEventListener('dragend', () => draggable.classList.remove('dragging'));
+        });
+
+        dropzones.forEach(zone => {
+            zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+            zone.addEventListener('drop', e => {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                const dragging = document.querySelector('.dragging');
+                if (dragging) { zone.appendChild(dragging); }
+            });
+        });
+    }
+    
+    checkDragBtn.onclick = checkDragDrop;
+
+    function checkDragDrop() {
+        let correctCount = 0;
+        let total = currentDragItems.length;
+        const preteritoZone = document.getElementById('zone-preterito');
+        const imperfectoZone = document.getElementById('zone-imperfecto');
+
+        document.querySelectorAll('.drag-explanation').forEach(e => e.remove());
+
+        const checkZone = (zone, correctTense) => {
+            zone.querySelectorAll('.draggable').forEach(item => {
+                const expKey = (currentLanguage === 'en') ? 'explanationEn' : 'explanationEs';
+                const explanationText = item.dataset[expKey] || "No explanation.";
+                const explanationEl = document.createElement('p');
+                explanationEl.className = 'drag-explanation';
+                explanationEl.textContent = `(${explanationText})`;
+                item.appendChild(explanationEl);
+
+                if (item.dataset.tense === correctTense) {
+                    item.style.backgroundColor = '#d4edda'; correctCount++;
+                } else { item.style.backgroundColor = '#f8d7da'; }
+            });
+        };
+
+        checkZone(preteritoZone, 'preterito');
+        checkZone(imperfectoZone, 'imperfecto');
+
+        dragPool.querySelectorAll('.draggable').forEach(item => {
+            item.style.backgroundColor = '#f8d7da';
+            const expKey = (currentLanguage === 'en') ? 'explanationEn' : 'explanationEs';
+            const explanationText = item.dataset[expKey] || "No explanation.";
+            const explanationEl = document.createElement('p');
+            explanationEl.className = 'drag-explanation';
+            explanationEl.textContent = `(${explanationText})`;
+            item.appendChild(explanationEl);
+        });
+
+        if (correctCount === total) {
+            dragFeedback.textContent = uiStrings[currentLanguage].feedback_drag_perfect;
+            dragFeedback.className = "correct";
+        } else {
+            dragFeedback.textContent = uiStrings[currentLanguage].feedback_check_story_errors
+                .replace('{correct}', correctCount)
+                .replace('{total}', total);
+            dragFeedback.className = "incorrect";
+        }
+    }
+
+    // --- Pestaña 4: Lógica de Flashcards ---
+    let currentCard = 0;
+    const cardElement = document.getElementById('flashcard');
+    const cardFront = document.getElementById('card-front');
+    const cardBack = document.getElementById('card-back');
+
+    window.loadCard = function(index) {
+        if (flashcardData[index]) {
+            const data = flashcardData[index];
+            // CAMBIO v5.8: Añade &nbsp; para forzar el espacio antes del ícono
+            const ttsHtml = `&nbsp;<span class="tts-icon" data-tts="${data.es}">🔊</span>`;
+            cardFront.innerHTML = data.en;
+            cardBack.innerHTML = `
+                <div>${data.es}${ttsHtml}</div>
+                <p>(${data.explanation})</p>
+            `;
+            cardElement.classList.remove('is-flipped');
+        }
+    }
+    
+    // CAMBIO v5.10: Función de volteo simple
+    window.flipCard = function() { 
+        cardElement.classList.toggle('is-flipped'); 
+    }
+    
+    window.nextCard = function() {
+        currentCard = (currentCard + 1) % flashcardData.length;
+        loadCard(currentCard);
+    }
+    window.prevCard = function() {
+        currentCard = (currentCard - 1 + flashcardData.length) % flashcardData.length;
+        loadCard(currentCard);
+    }
+    
+    // CAMBIO v5.10: Listener de clic de tarjeta separado
+    cardElement.addEventListener('click', function(e) {
+        // ¿Se hizo clic en el ícono de audio?
+        if (e.target.classList.contains('tts-icon')) {
+            e.stopPropagation(); // Detiene el clic aquí
+            const textToSpeak = e.target.dataset.tts;
+            if (textToSpeak) {
+                speak(textToSpeak);
+            }
+        } else {
+            // Si se hizo clic en cualquier otro lugar de la tarjeta, voltea
+            flipCard(); 
+        }
+    });
+
+    // --- Funciones de Utilidad ---
+    function shuffleArray(array) {
+        let newArray = [...array];
+        for (let i = newArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+        }
+        return newArray;
+    }
+
+    // --- Inicialización ---
+    loadCard(0); // Carga la primera flashcard
+    updateLanguage(); // Establece el idioma inicial
+});
+
+</script>
+</html>
