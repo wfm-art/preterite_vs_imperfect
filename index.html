@@ -548,12 +548,10 @@ const uiStrings = {
         feedback_drag_perfect: "Excellent! All categories are correct!",
         feedback_drag_errors: "You have {correct} of {total} correct. Check the red ones.",
         
-        // --- CAMBIO v5.10: Ejemplos de Visualizador Coherentes ---
         timeline_pret: "Preterite: A single, completed action. (The phone <strong>rang</strong> 📸)",
         timeline_imp: "Imperfect: A continuous background scene. (I <strong>was sleeping</strong> 🎥)",
         timeline_int: "Interruption: 'I <strong>was sleeping</strong>' (🎥) when 'the phone <strong>rang</strong>' (📸).",
         
-        // (v5.4) Traducciones del Quiz
         quiz_q1_trans: "It was 3 PM and it was sunny.",
         quiz_q2_trans: "I was studying when the phone rang.",
         quiz_q3_trans: "As a child, I always played with trains.",
@@ -632,12 +630,10 @@ const uiStrings = {
         feedback_drag_perfect: "¡Excelente! ¡Todas las categorías son correctas!",
         feedback_drag_errors: "Tienes {correct} de {total} correctas. Revisa las rojas.",
 
-        // --- CAMBIO v5.10: Ejemplos de Visualizador Coherentes ---
         timeline_pret: "Pretérito: Una acción única y completada. (El teléfono <strong>sonó</strong> 📸)",
         timeline_imp: "Imperfecto: Una escena continua de fondo. (Yo <strong>dormía</strong> 🎥)",
         timeline_int: "Interrupción: 'Yo <strong>dormía</strong>' (🎥) cuando 'el teléfono <strong>sonó</strong>' (📸).",
         
-        // (v5.4) Traducciones del Quiz (vacías en español)
         quiz_q1_trans: "",
         quiz_q2_trans: "",
         quiz_q3_trans: "",
@@ -788,8 +784,9 @@ const storyBank = [
         `
     },
     {
+        // --- CAMBIO v5.12: Contador corregido de 5 a 4 ---
         id: "story5",
-        total: 4,
+        total: 4, 
         html: `
             <select id="story5-1" data-exp-en="Imperfect for time." data-exp-es="Imperfecto para la hora."><option value="incorrecto">Fue</option><option value="correcto">Era</option></select>
             <span>la medianoche. Yo</span> 
@@ -988,12 +985,11 @@ document.addEventListener('DOMContentLoaded', () => {
         synth.speak(utterance);
     }
     
-    // --- CAMBIO v5.10: Lógica de Clic de Audio Separada ---
+    // --- Lógica de Clic de Audio Separada ---
     
     // Listener para todos los íconos de audio que NO están en una flashcard
     document.body.addEventListener('click', function(e) {
         if (e.target.classList.contains('tts-icon') && !e.target.closest('#flashcard')) {
-            // Solo reproduce si es un ícono de audio Y NO está dentro de la flashcard
             const textToSpeak = e.target.dataset.tts;
             if (textToSpeak) {
                 speak(textToSpeak);
@@ -1149,24 +1145,34 @@ document.addEventListener('DOMContentLoaded', () => {
     function touchStart(e) {
         // Previene el scroll al iniciar el arrastre
         if (e.target.classList.contains('draggable')) {
-             e.preventDefault();
+             // e.preventDefault(); // Esta línea puede ser problemática en algunos navegadores
         }
         touchDraggingItem = e.target.closest('.draggable');
         if (!touchDraggingItem) return;
         
-        touchDraggingItem.classList.add('dragging');
+        // Retraso pequeño para diferenciar scroll de arrastre
+        setTimeout(() => {
+            if(touchDraggingItem) touchDraggingItem.classList.add('dragging');
+        }, 100); // 100ms de retraso
     }
 
     function touchMove(e) {
-        if (!touchDraggingItem) return;
+        if (!touchDraggingItem || !touchDraggingItem.classList.contains('dragging')) return;
         
         e.preventDefault(); // Previene el scroll mientras se arrastra
         
         let touch = e.touches[0];
-        // Esconde el elemento que se arrastra para que elementFromPoint no lo detecte
+        
+        // Mueve el ítem visualmente
+        touchDraggingItem.style.position = 'absolute';
+        touchDraggingItem.style.zIndex = '1000';
+        touchDraggingItem.style.left = (touch.pageX - touchDraggingItem.offsetWidth / 2) + 'px';
+        touchDraggingItem.style.top = (touch.pageY - touchDraggingItem.offsetHeight / 2) + 'px';
+
+        // Esconde temporalmente para encontrar el elemento debajo
         touchDraggingItem.style.display = 'none'; 
         let elementUnder = document.elementFromPoint(touch.clientX, touch.clientY);
-        touchDraggingItem.style.display = ''; // Lo vuelve a mostrar
+        touchDraggingItem.style.display = '';
 
         // Quita el resaltado de todas las zonas
         document.querySelectorAll('.dropzone').forEach(zone => zone.classList.remove('drag-over'));
@@ -1180,13 +1186,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function touchEnd(e) {
-        if (!touchDraggingItem) return;
+        if (!touchDraggingItem || !touchDraggingItem.classList.contains('dragging')) {
+            touchDraggingItem = null;
+            return;
+        }
+        e.preventDefault();
+
+        // Limpia los estilos de arrastre
+        touchDraggingItem.style.position = '';
+        touchDraggingItem.style.zIndex = '';
+        touchDraggingItem.style.left = '';
+        touchDraggingItem.style.top = '';
 
         let touch = e.changedTouches[0];
-        // Esconde el elemento que se arrastra para que elementFromPoint no lo detecte
+        
+        // Esconde temporalmente para encontrar el elemento debajo
         touchDraggingItem.style.display = 'none';
         let elementUnder = document.elementFromPoint(touch.clientX, touch.clientY);
-        touchDraggingItem.style.display = ''; // Lo vuelve a mostrar
+        touchDraggingItem.style.display = '';
 
         let dropzone = elementUnder ? elementUnder.closest('.dropzone') : null;
 
@@ -1194,7 +1211,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dropzone.appendChild(touchDraggingItem);
         }
         
-        // Limpieza
+        // Limpieza final
         touchDraggingItem.classList.remove('dragging');
         touchDraggingItem = null;
         document.querySelectorAll('.dropzone').forEach(zone => zone.classList.remove('drag-over'));
@@ -1233,14 +1250,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         draggables.forEach(draggable => {
             // Eventos de Mouse
-            draggable.addEventListener('dragstart', () => draggable.classList.add('dragging'));
-            draggable.addEventListener('dragend', () => draggable.classList.remove('dragging'));
+            draggable.addEventListener('dragstart', (e) => {
+                e.target.classList.add('dragging');
+            });
+            draggable.addEventListener('dragend', (e) => {
+                e.target.classList.remove('dragging');
+            });
             
             // Eventos Táctiles (v5.11)
             draggable.addEventListener('touchstart', touchStart, { passive: false });
-            draggable.addEventListener('touchmove', touchMove, { passive: false });
-            draggable.addEventListener('touchend', touchEnd);
         });
+        
+        // Listeners globales para mover y soltar (necesarios para táctil)
+        document.addEventListener('touchmove', touchMove, { passive: false });
+        document.addEventListener('touchend', touchEnd);
+
 
         dropzones.forEach(zone => {
             zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
